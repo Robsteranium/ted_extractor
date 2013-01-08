@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+
+var fs   = require('fs'),
+    exec = require('child_process').exec;
+    
+var args = (process.ARGV || process.argv).slice(2);
+var files = [ "extractor.js" ];
+
+args.forEach(function(arg) {
+    if (arg.slice(0, 1) !== '-' && fs.existsSync(arg)) {
+      files.push(arg);
+    }
+});
+
+function runNodeunit() {
+  exec('nodeunit ' + args.join(" "), function (error, stdout, stderr) {
+    console.log(stdout);
+    if(stderr) {
+      console.log(stderr);
+    }
+  });
+}
+
+if (files.length)
+  console.log('Watching files: ' + files.join(',') + '  Crtl-C to Exit.');
+else
+  runNodeunit();
+  
+files.forEach(function(file){
+
+  runNodeunit();
+
+  fs.watchFile(file, { persistent: true, interval: 2000 }, function(c, p){
+    if(c.mtime > p.mtime) {
+      runNodeunit();
+    }
+  });
+});
