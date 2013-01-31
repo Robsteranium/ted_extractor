@@ -3,7 +3,7 @@
 var fs   = require('fs'),
     exec = require('child_process').exec;
     
-var args = (process.ARGV || process.argv).slice(2);
+var args = [ "test-extractor.js" ]; //(process.ARGV || process.argv).slice(2);
 var files = [ "extractor.js" ];
 
 args.forEach(function(arg) {
